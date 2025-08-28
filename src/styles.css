@@ -1,0 +1,96 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+
+body {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(270deg, #a8d8f0, #d4f0f9, #a8d8f0);
+  background-size: 600% 600%;
+  animation: gradientFlow 12s ease infinite;
+  color: #333;
+}
+
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+header {
+  padding: 20px;
+  text-align: center;
+}
+
+form {
+  display: inline-flex;
+  gap: 10px;
+}
+
+input[type="search"] {
+  padding: 10px 15px;
+  border-radius: 25px;
+  border: 1px solid #80cfc0;
+  font-size: 16px;
+}
+
+input[type="submit"] {
+  background: #80e0d0;
+  border: none;
+  border-radius: 25px;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+input[type="submit"]:hover {
+  transform: scale(1.08) rotate(-1deg);
+  background: #6fc7b8;
+}
+
+.current-weather {
+  max-width: 600px;
+  margin: 40px auto;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+p {
+  margin: 5px 0 0;
+}
+
+.temp {
+  font-size: 2rem;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+}
+
+footer a {
+  color: #333;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}

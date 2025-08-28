@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Weather Application</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <header>
+      <form>
+        <input type="search" placeholder="Enter a city.." required />
+        <input type="submit" value="Search" />
+      </form>
+    </header>
+
+    <main>
+      <div class="current-weather">
+        <div>
+          <h1>Rome</h1>
+          <p>
+            Saturday 15:32, sunny <br />
+            Humidity: <strong>64%</strong>, Wind: <strong>7.2km/h</strong>
+          </p>
+        </div>
+        <div class="temp">☀️ 28°C</div>
+      </div>
+    </main>
+
+    <footer> <p> This project was coded by <a href="https://codedbystella.wordpress.com/" target="_blank">Stella Marrali</a> and is <a href="https://github.com/coded-by-stella/Weather-App-SheCodes-by-Stella" target="_blank"> on GitHub</a> and <a href="https://weather-app-shecodes-by-stella.netlify.app/" target="_blank">hosted on Netlify</a> </p> </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="src/script.js"></script>
+  </body>
+</html>
