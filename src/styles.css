@@ -17,7 +17,6 @@ body{
   font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--text);
   overflow-x: hidden;
-  background: #cfefff; /* base fallback color */
   transition: background 600ms ease;
 }
 
@@ -68,7 +67,6 @@ button[type="submit"]:active{ transform: translateY(0); }
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  pointer-events: none;
 }
 .layer{
   position: absolute;
@@ -76,7 +74,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   background-size: 300% 300%;
   animation: drift 20s linear infinite;
   opacity: .9;
-  will-change: transform, background-position, filter;
+  will-change: transform;
 }
 .layer-1 { animation-duration: 36s; }
 .layer-2 { animation-duration: 54s; }
@@ -102,7 +100,6 @@ button[type="submit"]:active{ transform: translateY(0); }
 .theme--clear .layer-3{
   background-image: linear-gradient(180deg, #cfefff, #e9f8ff 40%, #ffffff);
 }
-
 /* Clouds */
 .theme--clouds .layer-1{
   background-image:
@@ -119,7 +116,6 @@ button[type="submit"]:active{ transform: translateY(0); }
 .theme--clouds .layer-3{
   background-image: linear-gradient(180deg, #a7b9cc, #dbe5f1 40%, #eef4fa);
 }
-
 /* Rain */
 .theme--rain .layer-1{
   background-image: linear-gradient(180deg, #6a7a8a, #93a1ad);
@@ -138,7 +134,6 @@ button[type="submit"]:active{ transform: translateY(0); }
   0% { background-position: 0 0; }
   100% { background-position: -320px 640px; }
 }
-
 /* Snow */
 .theme--snow .layer-1{
   background-image: linear-gradient(180deg, #93b5d1, #cfe5f3);
@@ -160,7 +155,6 @@ button[type="submit"]:active{ transform: translateY(0); }
   0%{ background-position: 0 -200px, -50px -220px, 0 -260px, -30px -240px; }
   100%{ background-position: 0 640px, -50px 700px, 0 820px, -30px 760px; }
 }
-
 /* Storm */
 .theme--storm .layer-1{
   background-image: linear-gradient(180deg, #2a3340, #485364);
@@ -179,7 +173,6 @@ button[type="submit"]:active{ transform: translateY(0); }
   95% { filter: brightness(1.85); }
   97% { filter: brightness(1.1); }
 }
-
 /* Fog */
 .theme--fog .layer-1{
   background-image: linear-gradient(180deg, #b9c0c6, #d8dde1);
@@ -234,7 +227,7 @@ h1.city{
   font-weight: 700;
 }
 
-/* ====== Icon (Inline SVG) ====== */
+/* ====== Icon (Lucide) ====== */
 .icon{
   display: grid;
   place-items: center;
