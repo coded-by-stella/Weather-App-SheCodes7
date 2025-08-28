@@ -89,14 +89,11 @@ async function fetchCityWeather(city) {
     if (!res?.data) throw new Error("Empty response");
     return res.data;
   } catch (err) {
-    // Propaga info utili per debug UI
-    const status = err?.response?.status;
-    const apiMsg = err?.response?.data?.message;
-    const msg = status
-      ? `API error ${status}${apiMsg ? `: ${apiMsg}` : ""}`
-      : err.message || "Network error";
-    throw new Error(msg);
-  }
+  console.error("Weather API error:", err);
+  showMessage(err.message || "City not found. Try another search.", "error");
+  body.className = "theme--fog";
+}
+
 }
 
 
@@ -164,11 +161,21 @@ setInterval(() => {
 (async function init() {
   try {
     showMessage("Loading current weather…", "info");
-    const data = await fetchCityWeather(defaultCity);
+    const data = await fetchCityWeather(defaultCity); // es. "Rome"
     renderWeather(data);
     showMessage("");
   } catch (err) {
-    console.error(err);
-    showMessage("Unable to load default city. Try searching.", "error");
+    console.error("Init error:", err);
+    showMessage(`Unable to load default city (${err.message}). Try searching.`, "error");
+    // Fallback automatico a "Oslo" per evitare pagina “vuota”
+    try {
+      const backup = await fetchCityWeather("Oslo");
+      renderWeather(backup);
+      showMessage("Loaded fallback city: Oslo", "info");
+    } catch (e2) {
+      console.error("Fallback error:", e2);
+      // Lascia il messaggio d’errore e il form funzionante
+    }
   }
 })();
+
