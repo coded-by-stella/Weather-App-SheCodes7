@@ -1,5 +1,5 @@
 // =================== Config ===================
-const apiKey = "ta8f14404a1b1cbdb0fo526029d3690d";
+const apiKey = "ta8f14404a1b1cbdb0fo526029d3690d"; // your SheCodes API key
 const defaultCity = "Rome";
 
 // =================== DOM Refs =================
@@ -16,7 +16,7 @@ const helperEl = document.getElementById("helper");
 const body = document.body;
 
 // =================== Request Guard ============
-// Prevents older responses from overwriting the latest one
+// Ensures only the latest response updates the UI
 let activeRequest = 0;
 
 // =================== Utils ====================
@@ -53,6 +53,7 @@ function showMessage(msg, type = "info") {
 }
 
 // =================== Icons (Lucide) ===========
+// Uses lucide.icons[name].toSvg(...) for reliability
 const lucideMap = [
   { test: /(thunder|storm|lightning)/i, icon: "Zap" },
   { test: /(sleet|snow|blizzard|flurr)/i, icon: "Snowflake" },
@@ -64,18 +65,18 @@ const lucideMap = [
 
 function pickLucideIcon(description = "") {
   const match = lucideMap.find((m) => m.test.test(description));
-  return match ? match.icon : "Sun";
+  return match ? match.icon : "Sun"; // <- fixed line
 }
 
 function setLucideIcon(container, iconName, label = "") {
-  if (!window.lucide || typeof window.lucide.createElement !== "function") {
+  const lib = window.lucide && window.lucide.icons;
+  if (!lib || !lib[iconName] || typeof lib[iconName].toSvg !== "function") {
     container.textContent = "☀️";
     container.setAttribute("aria-label", label || "Weather");
     return;
   }
-  container.innerHTML = "";
-  const svgEl = window.lucide.createElement(iconName, { size: 96, strokeWidth: 1.8 });
-  container.appendChild(svgEl);
+  const svg = lib[iconName].toSvg({ width: 96, height: 96, strokeWidth: 1.8 });
+  container.innerHTML = svg;
   container.setAttribute("aria-label", label || iconName);
 }
 
@@ -143,7 +144,7 @@ form.addEventListener("submit", async (e) => {
   const rid = ++activeRequest;
   showMessage("Searching…", "info");
 
-  // Reset interim UI
+  // Interim UI
   cityEl.textContent = query;
   iconEl.innerHTML = "";
   tempEl.textContent = "—";
@@ -153,11 +154,11 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const data = await fetchCityWeather(query);
-    if (rid !== activeRequest) return; // Ignore outdated response
+    if (rid !== activeRequest) return; // outdated response
     renderWeather(data);
     showMessage("");
   } catch (err) {
-    if (rid !== activeRequest) return; // Ignore outdated error
+    if (rid !== activeRequest) return; // outdated error
     console.error("Weather API error:", err);
     showMessage(err.message || "City not found. Try another search.", "error");
     body.className = "theme--fog";
@@ -179,6 +180,7 @@ setInterval(() => {
   } catch (err) {
     console.error("Init error:", err);
     showMessage(`Unable to load default city (${err.message}). Try searching.`, "error");
+    // Silent fallback so UI shows something
     try {
       const backup = await fetchCityWeather("Oslo");
       renderWeather(backup);
