@@ -28,7 +28,6 @@ header{
   display: flex;
   justify-content: center;
 }
-
 form{
   display: inline-flex;
   gap: 12px;
@@ -39,7 +38,6 @@ form{
   border-radius: 999px;
   box-shadow: var(--card-shadow);
 }
-
 input[type="search"]{
   width: min(60vw, 320px);
   padding: 10px 14px;
@@ -49,7 +47,6 @@ input[type="search"]{
   outline: none;
   background: #fff;
 }
-
 button[type="submit"]{
   background: #4f46e5;
   border: none;
@@ -81,7 +78,6 @@ button[type="submit"]:active{ transform: translateY(0); }
 .layer-1 { animation-duration: 42s; }
 .layer-2 { animation-duration: 60s; }
 .layer-3 { animation-duration: 90s; }
-
 @keyframes drift {
   0%{ transform: translate3d(0,0,0); }
   50%{ transform: translate3d(-3%, -2%, 0); }
@@ -89,7 +85,7 @@ button[type="submit"]:active{ transform: translateY(0); }
 }
 
 /* ====== Weather Themes ====== */
-/* CLEAR */
+/* Clear */
 .theme--clear .layer-1{
   background-image:
     radial-gradient(1200px 1200px at 80% 20%, rgba(255,225,140,.65), transparent 60%),
@@ -103,8 +99,7 @@ button[type="submit"]:active{ transform: translateY(0); }
 .theme--clear .layer-3{
   background-image: linear-gradient(180deg, #cfefff, #e9f8ff 40%, #ffffff);
 }
-
-/* CLOUDS */
+/* Clouds */
 .theme--clouds .layer-1{
   background-image:
     repeating-linear-gradient( to right,
@@ -120,8 +115,7 @@ button[type="submit"]:active{ transform: translateY(0); }
 .theme--clouds .layer-3{
   background-image: linear-gradient(180deg, #a7b9cc, #dbe5f1 40%, #eef4fa);
 }
-
-/* RAIN */
+/* Rain */
 .theme--rain .layer-1{
   background-image: linear-gradient(180deg, #6a7a8a, #93a1ad);
 }
@@ -139,8 +133,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   0% { background-position: 0 0; }
   100% { background-position: -300px 600px; }
 }
-
-/* SNOW */
+/* Snow */
 .theme--snow .layer-1{
   background-image: linear-gradient(180deg, #93b5d1, #cfe5f3);
 }
@@ -161,8 +154,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   0%{ background-position: 0 -200px, -50px -220px, 0 -260px, -30px -240px; }
   100%{ background-position: 0 600px, -50px 660px, 0 780px, -30px 720px; }
 }
-
-/* STORM */
+/* Storm */
 .theme--storm .layer-1{
   background-image: linear-gradient(180deg, #2a3340, #485364);
 }
@@ -180,8 +172,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   95% { filter: brightness(1.8); }
   97% { filter: brightness(1.1); }
 }
-
-/* FOG */
+/* Fog */
 .theme--fog .layer-1{
   background-image: linear-gradient(180deg, #b9c0c6, #d8dde1);
 }
@@ -201,7 +192,6 @@ main{
   z-index: 5;
   padding: 24px 16px 32px;
 }
-
 .current-weather{
   max-width: 860px;
   margin: 40px auto;
@@ -216,17 +206,13 @@ main{
   gap: 16px;
   box-shadow: var(--card-shadow);
 }
-
 .current-weather .meta{ min-width: 220px; }
-
 h1.city{
   margin: 0 0 6px 0;
   font-size: clamp(1.8rem, 4vw, 2.6rem);
   line-height: 1.15;
 }
-
 .time, .desc, .details{ margin: 4px 0; }
-
 .reading{
   display: grid;
   grid-template-columns: auto;
@@ -235,18 +221,17 @@ h1.city{
   gap: 8px;
   min-width: 160px;
 }
-
 .temp{
   font-size: clamp(1.8rem, 6vw, 3rem);
   font-weight: 700;
 }
 
-/* ====== Lucide Icon ====== */
+/* ====== Icon (Lucide) ====== */
 .icon{
   display: grid;
   place-items: center;
   min-height: 72px;
-  color: #111827; /* default; variabile coi temi sotto */
+  color: #111827;
 }
 .icon svg{
   width: clamp(68px, 10vw, 96px);
@@ -260,8 +245,7 @@ h1.city{
   from{ transform: scale(.92); opacity: 0; }
   to{ transform: scale(1); opacity: 1; }
 }
-
-/* Colori icona per tema */
+/* Icon color per theme */
 .theme--clear .icon{ color: #f59e0b; }
 .theme--clouds .icon{ color: #374151; }
 .theme--rain .icon{ color: #1f2937; }
@@ -278,7 +262,6 @@ h1.city{
 }
 .helper[data-type="error"]{ color: #b91c1c; }
 .helper[data-type="info"]{ color: #334155; }
-
 footer{
   position: relative;
   z-index: 5;

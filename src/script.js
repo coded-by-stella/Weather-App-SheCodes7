@@ -1,8 +1,8 @@
 // =================== Config ===================
-const apiKey = "ta8f14404a1b1cbdb0fo526029d3690d"; // tua API key SheCodes
+const apiKey = "ta8f14404a1b1cbdb0fo526029d3690d";
 const defaultCity = "Rome";
 
-// =================== DOM refs =================
+// =================== DOM Refs =================
 const form = document.getElementById("search-form");
 const input = document.getElementById("search-input");
 const cityEl = document.getElementById("city");
@@ -14,6 +14,10 @@ const tempEl = document.getElementById("temperature");
 const iconEl = document.getElementById("icon");
 const helperEl = document.getElementById("helper");
 const body = document.body;
+
+// =================== Request Guard ============
+// Prevents older responses from overwriting the latest one
+let activeRequest = 0;
 
 // =================== Utils ====================
 function formatTime(date = new Date()) {
@@ -48,34 +52,30 @@ function showMessage(msg, type = "info") {
   helperEl.dataset.type = type;
 }
 
-// =================== Icons (Lucide) ===================
+// =================== Icons (Lucide) ===========
 const lucideMap = [
-  { test: /(thunder|storm|lightning)/, icon: "Zap" },
-  { test: /(sleet|snow|blizzard|flurr)/, icon: "Snowflake" },
-  { test: /(rain|drizzle|shower)/, icon: "CloudRain" },
-  { test: /(fog|mist|haze|smoke)/, icon: "Fog" },
-  { test: /(overcast|cloud)/, icon: "Cloud" },
-  { test: /(sunny|clear|bright)/, icon: "Sun" },
+  { test: /(thunder|storm|lightning)/i, icon: "Zap" },
+  { test: /(sleet|snow|blizzard|flurr)/i, icon: "Snowflake" },
+  { test: /(rain|drizzle|shower)/i, icon: "CloudRain" },
+  { test: /(fog|mist|haze|smoke)/i, icon: "Fog" },
+  { test: /(overcast|cloud)/i, icon: "Cloud" },
+  { test: /(sunny|clear|bright)/i, icon: "Sun" },
 ];
 
 function pickLucideIcon(description = "") {
-  const txt = String(description).toLowerCase();
-  const match = lucideMap.find((m) => m.test.test(txt));
+  const match = lucideMap.find((m) => m.test.test(description));
   return match ? match.icon : "Sun";
 }
 
 function setLucideIcon(container, iconName, label = "") {
-  if (!window.lucide || !window.lucide.icons || !window.lucide.icons[iconName]) {
+  if (!window.lucide || typeof window.lucide.createElement !== "function") {
     container.textContent = "☀️";
     container.setAttribute("aria-label", label || "Weather");
     return;
   }
-  const svg = window.lucide.icons[iconName].toSvg({
-    width: "96",
-    height: "96",
-    strokeWidth: 1.8,
-  });
-  container.innerHTML = svg;
+  container.innerHTML = "";
+  const svgEl = window.lucide.createElement(iconName, { size: 96, strokeWidth: 1.8 });
+  container.appendChild(svgEl);
   container.setAttribute("aria-label", label || iconName);
 }
 
@@ -84,31 +84,41 @@ async function fetchCityWeather(city) {
   const url = `https://api.shecodes.io/weather/v1/current?query=${encodeURIComponent(
     city
   )}&key=${apiKey}&units=metric`;
+
   try {
     const res = await axios.get(url);
     if (!res?.data) throw new Error("Empty response");
     return res.data;
   } catch (err) {
-  console.error("Weather API error:", err);
-  showMessage(err.message || "City not found. Try another search.", "error");
-  body.className = "theme--fog";
+    const status = err?.response?.status;
+    const apiMsg = err?.response?.data?.message;
+    const msg = status
+      ? `API error ${status}${apiMsg ? `: ${apiMsg}` : ""}`
+      : err.message || "Network error";
+    throw new Error(msg);
+  }
 }
-
-}
-
 
 // =================== Render ===================
 function renderWeather(data) {
-  // Validazione minima
-  if (!data || !data.city || !data.temperature || typeof data.temperature.current !== "number") {
+  if (
+    !data ||
+    !data.city ||
+    !data.temperature ||
+    typeof data.temperature.current !== "number"
+  ) {
     throw new Error("Invalid data format");
   }
 
   const description = data?.condition?.description || "Clear";
   const tempCurrent = data.temperature.current;
+
   const humidityVal = Number.isFinite(data?.temperature?.humidity)
     ? data.temperature.humidity
-    : Number.isFinite(data?.humidity) ? data.humidity : null;
+    : Number.isFinite(data?.humidity)
+      ? data.humidity
+      : null;
+
   const windValue = data?.wind?.speed ?? data?.wind_speed;
 
   cityEl.textContent = data.city;
@@ -124,16 +134,16 @@ function renderWeather(data) {
   setThemeFromDescription(description);
 }
 
-
 // =================== Events ===================
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const query = input.value.trim();
   if (!query) return;
 
+  const rid = ++activeRequest;
   showMessage("Searching…", "info");
 
-  // reset placeholder UI
+  // Reset interim UI
   cityEl.textContent = query;
   iconEl.innerHTML = "";
   tempEl.textContent = "—";
@@ -143,39 +153,36 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const data = await fetchCityWeather(query);
+    if (rid !== activeRequest) return; // Ignore outdated response
     renderWeather(data);
     showMessage("");
   } catch (err) {
+    if (rid !== activeRequest) return; // Ignore outdated error
     console.error("Weather API error:", err);
-    showMessage("City not found. Try another search.", "error");
-    body.className = "theme--fog"; // fallback
+    showMessage(err.message || "City not found. Try another search.", "error");
+    body.className = "theme--fog";
   }
 });
 
-// orologio UI ogni minuto
+// =================== Time Ticker ==============
 setInterval(() => {
   timeEl.textContent = formatTime(new Date());
 }, 60_000);
 
-// bootstrap
+// =================== Bootstrap ================
 (async function init() {
   try {
     showMessage("Loading current weather…", "info");
-    const data = await fetchCityWeather(defaultCity); // es. "Rome"
+    const data = await fetchCityWeather(defaultCity);
     renderWeather(data);
     showMessage("");
   } catch (err) {
     console.error("Init error:", err);
     showMessage(`Unable to load default city (${err.message}). Try searching.`, "error");
-    // Fallback automatico a "Oslo" per evitare pagina “vuota”
     try {
       const backup = await fetchCityWeather("Oslo");
       renderWeather(backup);
-      showMessage("Loaded fallback city: Oslo", "info");
-    } catch (e2) {
-      console.error("Fallback error:", e2);
-      // Lascia il messaggio d’errore e il form funzionante
-    }
+      showMessage("");
+    } catch {}
   }
 })();
-

@@ -1,15 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Meta -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- Title -->
     <title>My Weather Application</title>
+
+    <!-- Fonts & Styles -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="stylesheet" href="src/styles.css"/>
   </head>
-  <body class="theme--clear">
-    <!-- Il tema viene cambiato via JS (theme--clear/clouds/rain/snow/storm/fog) -->
 
+  <!-- Theme class changes dynamically via JS -->
+  <body class="theme--clear">
+    <!-- Header -->
     <header>
       <form id="search-form" autocomplete="off" aria-label="City search form">
         <input
@@ -23,13 +29,14 @@
       </form>
     </header>
 
-    <!-- Layer per lo sfondo animato -->
+    <!-- Animated background layers -->
     <div class="sky">
       <div class="layer parallax layer-1"></div>
       <div class="layer parallax layer-2"></div>
       <div class="layer parallax layer-3"></div>
     </div>
 
+    <!-- Main content -->
     <main>
       <section class="current-weather" aria-live="polite">
         <div class="meta">
@@ -43,14 +50,17 @@
         </div>
 
         <div class="reading">
+          <!-- SVG icon container (Lucide) -->
           <div id="icon" class="icon" role="img" aria-label="Weather icon"></div>
           <div class="temp" id="temperature">28°C</div>
         </div>
       </section>
 
+      <!-- Helper/status messages -->
       <p class="helper" id="helper" role="status" aria-live="polite"></p>
     </main>
 
+    <!-- Footer -->
     <footer>
       <p>
         This project was coded by
@@ -62,9 +72,9 @@
       </p>
     </footer>
 
-    <!-- Libs -->
+    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
 
     <!-- App -->
     <script src="src/script.js"></script>
