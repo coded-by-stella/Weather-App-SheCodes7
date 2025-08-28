@@ -228,20 +228,13 @@ h1.city{
 }
 
 /* ====== Icon (Lucide) ====== */
-.icon{
-  display: grid;
-  place-items: center;
-  min-height: 72px;
-  color: #111827;
-}
-.icon svg{
+.icon {
   width: clamp(68px, 10vw, 96px);
   height: auto;
-  stroke: currentColor;
-  fill: none;
-  animation: icon-pop .25s ease-out;
+  display: block;
   filter: drop-shadow(0 6px 16px rgba(0,0,0,.18));
 }
+
 @keyframes icon-pop{
   from{ transform: scale(.92); opacity: 0; }
   to{ transform: scale(1); opacity: 1; }
