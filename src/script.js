@@ -84,42 +84,49 @@ async function fetchCityWeather(city) {
   const url = `https://api.shecodes.io/weather/v1/current?query=${encodeURIComponent(
     city
   )}&key=${apiKey}&units=metric`;
-  const { data } = await axios.get(url);
-  return data;
+  try {
+    const res = await axios.get(url);
+    if (!res?.data) throw new Error("Empty response");
+    return res.data;
+  } catch (err) {
+    // Propaga info utili per debug UI
+    const status = err?.response?.status;
+    const apiMsg = err?.response?.data?.message;
+    const msg = status
+      ? `API error ${status}${apiMsg ? `: ${apiMsg}` : ""}`
+      : err.message || "Network error";
+    throw new Error(msg);
+  }
 }
+
 
 // =================== Render ===================
 function renderWeather(data) {
-  const description = data?.condition?.description || "—";
-  const tempCurrent = data?.temperature?.current;
-  const humidityFromTemp = data?.temperature?.humidity;
-  const humidityRoot = data?.humidity;
+  // Validazione minima
+  if (!data || !data.city || !data.temperature || typeof data.temperature.current !== "number") {
+    throw new Error("Invalid data format");
+  }
 
-  cityEl.textContent = data?.city || input.value.trim();
-  tempEl.textContent = Number.isFinite(tempCurrent) ? `${Math.round(tempCurrent)}°C` : "—";
-
-  // humidity: SheCodes spesso fornisce temperature.humidity, fallback a root
-  const humidityVal = Number.isFinite(humidityFromTemp)
-    ? humidityFromTemp
-    : Number.isFinite(humidityRoot) ? humidityRoot : null;
-  humidityEl.textContent = humidityVal !== null ? `${Math.round(humidityVal)}%` : "—";
-
-  // wind in km/h
+  const description = data?.condition?.description || "Clear";
+  const tempCurrent = data.temperature.current;
+  const humidityVal = Number.isFinite(data?.temperature?.humidity)
+    ? data.temperature.humidity
+    : Number.isFinite(data?.humidity) ? data.humidity : null;
   const windValue = data?.wind?.speed ?? data?.wind_speed;
-  windEl.textContent = Number.isFinite(windValue) ? `${Math.round(windValue)} km/h` : "—";
 
+  cityEl.textContent = data.city;
+  tempEl.textContent = `${Math.round(tempCurrent)}°C`;
+  humidityEl.textContent = humidityVal !== null ? `${Math.round(humidityVal)}%` : "—";
+  windEl.textContent = Number.isFinite(windValue) ? `${Math.round(windValue)} km/h` : "—";
   descEl.textContent = capitalize(description);
 
-  // Icona Lucide
   const iconName = pickLucideIcon(description);
   setLucideIcon(iconEl, iconName, `Weather: ${capitalize(description)}`);
 
-  // Orario locale dispositivo
   timeEl.textContent = formatTime(new Date());
-
-  // Tema dinamico
   setThemeFromDescription(description);
 }
+
 
 // =================== Events ===================
 form.addEventListener("submit", async (e) => {
