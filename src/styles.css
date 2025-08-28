@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
-
+/* ====== Tokens ====== */
 :root{
   --radius: 20px;
   --glass: rgba(255,255,255,.28);
@@ -9,9 +9,10 @@
   --card-shadow: 0 10px 30px rgba(0,0,0,.15);
 }
 
+/* ====== Base ====== */
 *{ box-sizing: border-box; }
 html, body { height: 100%; }
-body {
+body{
   margin: 0;
   font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   color: var(--text);
@@ -19,8 +20,8 @@ body {
   transition: background 600ms ease;
 }
 
-
-header {
+/* ====== Header & Search ====== */
+header{
   position: relative;
   z-index: 5;
   padding: 24px 16px;
@@ -28,7 +29,7 @@ header {
   justify-content: center;
 }
 
-form {
+form{
   display: inline-flex;
   gap: 12px;
   background: rgba(255,255,255,.5);
@@ -46,7 +47,7 @@ input[type="search"]{
   border: 1px solid transparent;
   font-size: 16px;
   outline: none;
-  background: white;
+  background: #fff;
 }
 
 button[type="submit"]{
@@ -55,7 +56,7 @@ button[type="submit"]{
   border-radius: 999px;
   padding: 10px 18px;
   font-size: 16px;
-  color: white;
+  color: #fff;
   cursor: pointer;
   transition: transform .2s ease, box-shadow .2s ease;
   box-shadow: 0 6px 18px rgba(79,70,229,.35);
@@ -63,7 +64,7 @@ button[type="submit"]{
 button[type="submit"]:hover{ transform: translateY(-1px); }
 button[type="submit"]:active{ transform: translateY(0); }
 
-
+/* ====== Animated Sky ====== */
 .sky{
   position: fixed;
   inset: 0;
@@ -87,7 +88,8 @@ button[type="submit"]:active{ transform: translateY(0); }
   100%{ transform: translate3d(0,0,0); }
 }
 
-
+/* ====== Weather Themes ====== */
+/* CLEAR */
 .theme--clear .layer-1{
   background-image:
     radial-gradient(1200px 1200px at 80% 20%, rgba(255,225,140,.65), transparent 60%),
@@ -102,7 +104,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   background-image: linear-gradient(180deg, #cfefff, #e9f8ff 40%, #ffffff);
 }
 
-
+/* CLOUDS */
 .theme--clouds .layer-1{
   background-image:
     repeating-linear-gradient( to right,
@@ -119,7 +121,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   background-image: linear-gradient(180deg, #a7b9cc, #dbe5f1 40%, #eef4fa);
 }
 
-
+/* RAIN */
 .theme--rain .layer-1{
   background-image: linear-gradient(180deg, #6a7a8a, #93a1ad);
 }
@@ -138,7 +140,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   100% { background-position: -300px 600px; }
 }
 
-
+/* SNOW */
 .theme--snow .layer-1{
   background-image: linear-gradient(180deg, #93b5d1, #cfe5f3);
 }
@@ -160,7 +162,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   100%{ background-position: 0 600px, -50px 660px, 0 780px, -30px 720px; }
 }
 
-
+/* STORM */
 .theme--storm .layer-1{
   background-image: linear-gradient(180deg, #2a3340, #485364);
 }
@@ -179,7 +181,7 @@ button[type="submit"]:active{ transform: translateY(0); }
   97% { filter: brightness(1.1); }
 }
 
-
+/* FOG */
 .theme--fog .layer-1{
   background-image: linear-gradient(180deg, #b9c0c6, #d8dde1);
 }
@@ -193,8 +195,8 @@ button[type="submit"]:active{ transform: translateY(0); }
   background-image: linear-gradient(180deg, #aab3bb, #cfd5db);
 }
 
-
-main {
+/* ====== Card ====== */
+main{
   position: relative;
   z-index: 5;
   padding: 24px 16px 32px;
@@ -215,9 +217,7 @@ main {
   box-shadow: var(--card-shadow);
 }
 
-.current-weather .meta{
-  min-width: 220px;
-}
+.current-weather .meta{ min-width: 220px; }
 
 h1.city{
   margin: 0 0 6px 0;
@@ -225,7 +225,7 @@ h1.city{
   line-height: 1.15;
 }
 
-.time, .desc, .details { margin: 4px 0; }
+.time, .desc, .details{ margin: 4px 0; }
 
 .reading{
   display: grid;
@@ -236,18 +236,40 @@ h1.city{
   min-width: 160px;
 }
 
-.icon{
-  width: clamp(68px, 10vw, 96px);
-  height: auto;
-  display: none;
-}
-
 .temp{
   font-size: clamp(1.8rem, 6vw, 3rem);
   font-weight: 700;
 }
 
+/* ====== Lucide Icon ====== */
+.icon{
+  display: grid;
+  place-items: center;
+  min-height: 72px;
+  color: #111827; /* default; variabile coi temi sotto */
+}
+.icon svg{
+  width: clamp(68px, 10vw, 96px);
+  height: auto;
+  stroke: currentColor;
+  fill: none;
+  animation: icon-pop .25s ease-out;
+  filter: drop-shadow(0 6px 16px rgba(0,0,0,.18));
+}
+@keyframes icon-pop{
+  from{ transform: scale(.92); opacity: 0; }
+  to{ transform: scale(1); opacity: 1; }
+}
 
+/* Colori icona per tema */
+.theme--clear .icon{ color: #f59e0b; }
+.theme--clouds .icon{ color: #374151; }
+.theme--rain .icon{ color: #1f2937; }
+.theme--snow .icon{ color: #0ea5e9; }
+.theme--storm .icon{ color: #e5e7eb; }
+.theme--fog .icon{ color: #475569; }
+
+/* ====== Helper & Footer ====== */
 .helper{
   text-align: center;
   margin: 6px auto 0;
@@ -257,7 +279,6 @@ h1.city{
 .helper[data-type="error"]{ color: #b91c1c; }
 .helper[data-type="info"]{ color: #334155; }
 
-
 footer{
   position: relative;
   z-index: 5;
@@ -265,10 +286,14 @@ footer{
   padding: 16px 12px 28px;
   font-size: .95rem;
 }
-footer a{ color: #111827; text-decoration: none; border-bottom: 1px dashed rgba(0,0,0,.3); }
+footer a{
+  color: #111827;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(0,0,0,.3);
+}
 footer a:hover{ border-bottom-style: solid; }
 
-
+/* ====== Responsive ====== */
 @media (max-width: 640px){
   .current-weather{
     flex-direction: column;

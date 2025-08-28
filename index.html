@@ -2,13 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>My Weather Application</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="stylesheet" href="src/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="stylesheet" href="src/styles.css"/>
   </head>
-  <body class="theme--clear"> 
-    
+  <body class="theme--clear">
+    <!-- Il tema viene cambiato via JS (theme--clear/clouds/rain/snow/storm/fog) -->
 
     <header>
       <form id="search-form" autocomplete="off" aria-label="City search form">
@@ -23,7 +23,7 @@
       </form>
     </header>
 
-    
+    <!-- Layer per lo sfondo animato -->
     <div class="sky">
       <div class="layer parallax layer-1"></div>
       <div class="layer parallax layer-2"></div>
@@ -35,9 +35,7 @@
         <div class="meta">
           <h1 class="city" id="city">Rome</h1>
           <p class="time" id="time">Saturday 15:32</p>
-          <p class="desc">
-            <span id="description">Sunny</span>
-          </p>
+          <p class="desc"><span id="description">Sunny</span></p>
           <p class="details">
             Humidity: <strong id="humidity">64%</strong>,
             Wind: <strong id="wind">7.2 km/h</strong>
@@ -45,7 +43,7 @@
         </div>
 
         <div class="reading">
-          <img id="icon" src="" alt="" class="icon" />
+          <div id="icon" class="icon" role="img" aria-label="Weather icon"></div>
           <div class="temp" id="temperature">28°C</div>
         </div>
       </section>
@@ -56,7 +54,7 @@
     <footer>
       <p>
         This project was coded by
-        <a href="https://codedbystella.wordpress.com/" target="_blank" rel="noopener">Stella Marrali</a>
+        <a href="https://portfolio-codedbystella.netlify.app/" target="_blank" rel="noopener">Stella Marrali</a>
         and is
         <a href="https://github.com/coded-by-stella/Weather-App-SheCodes-by-Stella" target="_blank" rel="noopener">on GitHub</a>
         and
@@ -64,7 +62,11 @@
       </p>
     </footer>
 
+    <!-- Libs -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- App -->
     <script src="src/script.js"></script>
   </body>
 </html>
