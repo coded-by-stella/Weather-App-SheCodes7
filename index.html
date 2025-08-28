@@ -30,7 +30,7 @@
     </header>
 
     <!-- Animated background layers -->
-    <div class="sky">
+    <div class="sky" aria-hidden="true">
       <div class="layer parallax layer-1"></div>
       <div class="layer parallax layer-2"></div>
       <div class="layer parallax layer-3"></div>
@@ -50,11 +50,10 @@
         </div>
 
         <div class="reading">
-  <!-- Weather icon from SheCodes API -->
-  <img id="icon" class="icon" src="" alt="Weather icon" />
-  <div class="temp" id="temperature">28°C</div>
-</div>
-
+          <!-- Weather icon from SheCodes API -->
+          <img id="icon" class="icon" src="" alt="Weather icon" />
+          <div class="temp" id="temperature">28°C</div>
+        </div>
       </section>
 
       <!-- Helper/status messages -->
@@ -73,10 +72,8 @@
       </p>
     </footer>
 
-    <!-- Libraries -->
+    <!-- Library -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- Use a pinned Lucide version -->
-    <script src="https://unpkg.com/lucide@0.470.0/dist/umd/lucide.js"></script>
 
     <!-- App -->
     <script src="src/script.js"></script>

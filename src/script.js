@@ -33,51 +33,25 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function classifyTheme(description = "") {
-  const t = description.toLowerCase();
-  if (/(thunder|storm|lightning)/.test(t)) return "theme--storm";
-  if (/(snow|sleet|blizzard|flurr)/.test(t)) return "theme--snow";
-  if (/(rain|drizzle|shower)/.test(t)) return "theme--rain";
-  if (/(fog|mist|haze|smoke)/.test(t)) return "theme--fog";
-  if (/(cloud|overcast)/.test(t)) return "theme--clouds";
-  return "theme--clear";
+// =================== Theme Helpers ============
+function pickThemeKey(iconCode = "", description = "") {
+  const src = `${iconCode} ${description}`.toLowerCase();
+  if (/thunder|storm|lightning/.test(src)) return "storm";
+  if (/snow|sleet|blizzard|flurr/.test(src)) return "snow";
+  if (/rain|drizzle|shower/.test(src)) return "rain";
+  if (/mist|fog|haze|smoke/.test(src)) return "fog";
+  if (/cloud|overcast/.test(src)) return "clouds";
+  if (/clear|sun/.test(src)) return "clear";
+  return "clear";
 }
 
-function setThemeFromDescription(description) {
-  body.className = classifyTheme(description);
+function applyTheme(themeKey) {
+  body.className = `theme--${themeKey}`;
 }
 
 function showMessage(msg, type = "info") {
   helperEl.textContent = msg || "";
   helperEl.dataset.type = type;
-}
-
-// =================== Icons (Lucide) ===========
-// Uses lucide.icons[name].toSvg(...) for reliability
-const lucideMap = [
-  { test: /(thunder|storm|lightning)/i, icon: "Zap" },
-  { test: /(sleet|snow|blizzard|flurr)/i, icon: "Snowflake" },
-  { test: /(rain|drizzle|shower)/i, icon: "CloudRain" },
-  { test: /(fog|mist|haze|smoke)/i, icon: "Fog" },
-  { test: /(overcast|cloud)/i, icon: "Cloud" },
-  { test: /(sunny|clear|bright)/i, icon: "Sun" },
-];
-
-function pickLucideIcon(description = "") {
-  const match = lucideMap.find((m) => m.test.test(description));
-  return match ? match.icon : "Sun"; // <- fixed line
-}
-
-function setLucideIcon(container, iconName, label = "") {
-  const lib = window.lucide && window.lucide.icons;
-  if (!lib || !lib[iconName] || typeof lib[iconName].toSvg !== "function") {
-    container.textContent = "☀️";
-    container.setAttribute("aria-label", label || "Weather");
-    return;
-  }
-  const svg = lib[iconName].toSvg({ width: 96, height: 96, strokeWidth: 1.8 });
-  container.innerHTML = svg;
-  container.setAttribute("aria-label", label || iconName);
 }
 
 // =================== API ======================
@@ -112,6 +86,8 @@ function renderWeather(data) {
   }
 
   const description = data?.condition?.description || "Clear";
+  const iconUrl     = data?.condition?.icon_url || "";
+  const iconCode    = data?.condition?.icon || "";
   const tempCurrent = data.temperature.current;
 
   const humidityVal = Number.isFinite(data?.temperature?.humidity)
@@ -122,25 +98,21 @@ function renderWeather(data) {
 
   const windValue = data?.wind?.speed ?? data?.wind_speed;
 
+  // Text UI
   cityEl.textContent = data.city;
   tempEl.textContent = `${Math.round(tempCurrent)}°C`;
   humidityEl.textContent = humidityVal !== null ? `${Math.round(humidityVal)}%` : "—";
   windEl.textContent = Number.isFinite(windValue) ? `${Math.round(windValue)} km/h` : "—";
   descEl.textContent = capitalize(description);
-
-    // Weather icon (from SheCodes API)
-  const iconUrl = data?.condition?.icon_url || "";
-  if (iconUrl) {
-    iconEl.src = iconUrl;
-    iconEl.alt = `Weather: ${capitalize(description)}`;
-  }
-
-  // Background theme (still dynamic)
-  const themeKey = pickThemeKey(data.condition.icon, description);
-  applyTheme(themeKey);
-
   timeEl.textContent = formatTime(new Date());
 
+  // Icon UI (from SheCodes API)
+  iconEl.src = iconUrl || "";
+  iconEl.alt = `Weather: ${capitalize(description)}`;
+
+  // Theme / background
+  const themeKey = pickThemeKey(iconCode, description);
+  applyTheme(themeKey);
 }
 
 // =================== Events ===================
@@ -152,9 +124,10 @@ form.addEventListener("submit", async (e) => {
   const rid = ++activeRequest;
   showMessage("Searching…", "info");
 
-  // Interim UI
+  // Interim UI reset
   cityEl.textContent = query;
-  iconEl.innerHTML = "";
+  iconEl.src = "";
+  iconEl.alt = "Weather icon";
   tempEl.textContent = "—";
   descEl.textContent = "—";
   humidityEl.textContent = "—";
@@ -162,14 +135,14 @@ form.addEventListener("submit", async (e) => {
 
   try {
     const data = await fetchCityWeather(query);
-    if (rid !== activeRequest) return; // outdated response
+    if (rid !== activeRequest) return; // ignore outdated response
     renderWeather(data);
     showMessage("");
   } catch (err) {
-    if (rid !== activeRequest) return; // outdated error
+    if (rid !== activeRequest) return; // ignore outdated error
     console.error("Weather API error:", err);
     showMessage(err.message || "City not found. Try another search.", "error");
-    body.className = "theme--fog";
+    applyTheme("fog");
   }
 });
 
@@ -188,7 +161,6 @@ setInterval(() => {
   } catch (err) {
     console.error("Init error:", err);
     showMessage(`Unable to load default city (${err.message}). Try searching.`, "error");
-    // Silent fallback so UI shows something
     try {
       const backup = await fetchCityWeather("Oslo");
       renderWeather(backup);
