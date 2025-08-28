@@ -128,11 +128,19 @@ function renderWeather(data) {
   windEl.textContent = Number.isFinite(windValue) ? `${Math.round(windValue)} km/h` : "—";
   descEl.textContent = capitalize(description);
 
-  const iconName = pickLucideIcon(description);
-  setLucideIcon(iconEl, iconName, `Weather: ${capitalize(description)}`);
+    // Weather icon (from SheCodes API)
+  const iconUrl = data?.condition?.icon_url || "";
+  if (iconUrl) {
+    iconEl.src = iconUrl;
+    iconEl.alt = `Weather: ${capitalize(description)}`;
+  }
+
+  // Background theme (still dynamic)
+  const themeKey = pickThemeKey(data.condition.icon, description);
+  applyTheme(themeKey);
 
   timeEl.textContent = formatTime(new Date());
-  setThemeFromDescription(description);
+
 }
 
 // =================== Events ===================
