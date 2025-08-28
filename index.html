@@ -4,33 +4,67 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>My Weather Application</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="stylesheet" href="src/styles.css" />
   </head>
-  <body>
+  <body class="theme--clear"> 
+    
+
     <header>
-      <form>
-        <input type="search" placeholder="Enter a city.." required />
-        <input type="submit" value="Search" />
+      <form id="search-form" autocomplete="off" aria-label="City search form">
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Enter a city…"
+          aria-label="City"
+          required
+        />
+        <button type="submit" aria-label="Search city">Search</button>
       </form>
     </header>
 
+    
+    <div class="sky">
+      <div class="layer parallax layer-1"></div>
+      <div class="layer parallax layer-2"></div>
+      <div class="layer parallax layer-3"></div>
+    </div>
+
     <main>
-      <div class="current-weather">
-        <div>
-          <h1>Rome</h1>
-          <p>
-            Saturday 15:32, sunny <br />
-            Humidity: <strong>64%</strong>, Wind: <strong>7.2km/h</strong>
+      <section class="current-weather" aria-live="polite">
+        <div class="meta">
+          <h1 class="city" id="city">Rome</h1>
+          <p class="time" id="time">Saturday 15:32</p>
+          <p class="desc">
+            <span id="description">Sunny</span>
+          </p>
+          <p class="details">
+            Humidity: <strong id="humidity">64%</strong>,
+            Wind: <strong id="wind">7.2 km/h</strong>
           </p>
         </div>
-        <div class="temp">☀️ 28°C</div>
-      </div>
+
+        <div class="reading">
+          <img id="icon" src="" alt="" class="icon" />
+          <div class="temp" id="temperature">28°C</div>
+        </div>
+      </section>
+
+      <p class="helper" id="helper" role="status" aria-live="polite"></p>
     </main>
 
-    <footer> <p> This project was coded by <a href="https://codedbystella.wordpress.com/" target="_blank">Stella Marrali</a> and is <a href="https://github.com/coded-by-stella/Weather-App-SheCodes-by-Stella" target="_blank"> on GitHub</a> and <a href="https://weather-app-shecodes-by-stella.netlify.app/" target="_blank">hosted on Netlify</a> </p> </footer>
+    <footer>
+      <p>
+        This project was coded by
+        <a href="https://codedbystella.wordpress.com/" target="_blank" rel="noopener">Stella Marrali</a>
+        and is
+        <a href="https://github.com/coded-by-stella/Weather-App-SheCodes-by-Stella" target="_blank" rel="noopener">on GitHub</a>
+        and
+        <a href="https://weather-app-shecodes-by-stella.netlify.app/" target="_blank" rel="noopener">hosted on Netlify</a>.
+      </p>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
     <script src="src/script.js"></script>
   </body>
 </html>
