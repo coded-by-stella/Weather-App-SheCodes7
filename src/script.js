@@ -33,51 +33,72 @@ function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function classifyTheme(description = "") {
-  const t = description.toLowerCase();
-  if (/(thunder|storm|lightning)/.test(t)) return "theme--storm";
-  if (/(snow|sleet|blizzard|flurr)/.test(t)) return "theme--snow";
-  if (/(rain|drizzle|shower)/.test(t)) return "theme--rain";
-  if (/(fog|mist|haze|smoke)/.test(t)) return "theme--fog";
-  if (/(cloud|overcast)/.test(t)) return "theme--clouds";
-  return "theme--clear";
-}
+// =================== Icon & Theme Logic =======
+// Pure inline SVGs (no external CDN)
+const SVGs = {
+  Sun: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+  </svg>`,
+  Cloud: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M17.5 19a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1"></path>
+    <path d="M5 19h12.5"></path>
+  </svg>`,
+  CloudRain: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M17.5 18a4.5 4.5 0 0 0 0-9 5.5 5.5 0 0 0-10.9 1"></path>
+    <path d="M5 18h12.5"></path>
+    <path d="M8 20l-1 2M12 20l-1 2M16 20l-1 2"></path>
+  </svg>`,
+  Snowflake: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"></path>
+  </svg>`,
+  Zap: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"></path>
+  </svg>`,
+  Fog: (size = 96, stroke = 1.8) => `
+  <svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${stroke}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M3 12h18M5 16h14M7 20h10"></path>
+    <path d="M17.5 8a4.5 4.5 0 0 0-8.9 1"></path>
+  </svg>`,
+};
 
-function setThemeFromDescription(description) {
-  body.className = classifyTheme(description);
-}
-
-function showMessage(msg, type = "info") {
-  helperEl.textContent = msg || "";
-  helperEl.dataset.type = type;
-}
-
-// =================== Icons (Lucide) ===========
-// Uses lucide.icons[name].toSvg(...) for reliability
-const lucideMap = [
-  { test: /(thunder|storm|lightning)/i, icon: "Zap" },
-  { test: /(sleet|snow|blizzard|flurr)/i, icon: "Snowflake" },
-  { test: /(rain|drizzle|shower)/i, icon: "CloudRain" },
-  { test: /(fog|mist|haze|smoke)/i, icon: "Fog" },
-  { test: /(overcast|cloud)/i, icon: "Cloud" },
-  { test: /(sunny|clear|bright)/i, icon: "Sun" },
+const iconRules = [
+  { test: /(thunder|storm|lightning)/i, icon: "Zap", theme: "theme--storm" },
+  { test: /(sleet|snow|blizzard|flurr)/i, icon: "Snowflake", theme: "theme--snow" },
+  { test: /(rain|drizzle|shower)/i, icon: "CloudRain", theme: "theme--rain" },
+  { test: /(fog|mist|haze|smoke)/i, icon: "Fog", theme: "theme--fog" },
+  { test: /(overcast|cloud)/i, icon: "Cloud", theme: "theme--clouds" },
+  { test: /(sunny|clear|bright)/i, icon: "Sun", theme: "theme--clear" },
 ];
 
-function pickLucideIcon(description = "") {
-  const match = lucideMap.find((m) => m.test.test(description));
-  return match ? match.icon : "Sun"; // <- fixed line
+function pickIconAndTheme(conditionIcon = "", description = "") {
+  const src = `${conditionIcon} ${description}`.toLowerCase();
+  // Map some common SheCodes icon tokens to our buckets
+  // Examples to catch: "clear-sky-day", "few-clouds", "rain", "snow", "thunderstorm", "mist"
+  if (/thunder/.test(src)) return { icon: "Zap", theme: "theme--storm" };
+  if (/snow|sleet|blizzard|flurr/.test(src)) return { icon: "Snowflake", theme: "theme--snow" };
+  if (/rain|drizzle|shower/.test(src)) return { icon: "CloudRain", theme: "theme--rain" };
+  if (/mist|fog|haze|smoke/.test(src)) return { icon: "Fog", theme: "theme--fog" };
+  if (/cloud/.test(src)) return { icon: "Cloud", theme: "theme--clouds" };
+  if (/clear|sun/.test(src)) return { icon: "Sun", theme: "theme--clear" };
+  // Fallback to regex rules on description
+  const rule = iconRules.find((r) => r.test.test(description));
+  return rule ? { icon: rule.icon, theme: rule.theme } : { icon: "Sun", theme: "theme--clear" };
 }
 
-function setLucideIcon(container, iconName, label = "") {
-  const lib = window.lucide && window.lucide.icons;
-  if (!lib || !lib[iconName] || typeof lib[iconName].toSvg !== "function") {
-    container.textContent = "☀️";
-    container.setAttribute("aria-label", label || "Weather");
-    return;
-  }
-  const svg = lib[iconName].toSvg({ width: 96, height: 96, strokeWidth: 1.8 });
-  container.innerHTML = svg;
+function setInlineIcon(container, iconName, label = "") {
+  const svgMaker = SVGs[iconName] || SVGs.Sun;
+  container.innerHTML = svgMaker(96, 1.8);
   container.setAttribute("aria-label", label || iconName);
+}
+
+function applyTheme(themeClass) {
+  body.className = themeClass;
 }
 
 // =================== API ======================
@@ -112,6 +133,7 @@ function renderWeather(data) {
   }
 
   const description = data?.condition?.description || "Clear";
+  const conditionIcon = data?.condition?.icon || "";
   const tempCurrent = data.temperature.current;
 
   const humidityVal = Number.isFinite(data?.temperature?.humidity)
@@ -122,17 +144,18 @@ function renderWeather(data) {
 
   const windValue = data?.wind?.speed ?? data?.wind_speed;
 
+  // Textual UI
   cityEl.textContent = data.city;
   tempEl.textContent = `${Math.round(tempCurrent)}°C`;
   humidityEl.textContent = humidityVal !== null ? `${Math.round(humidityVal)}%` : "—";
   windEl.textContent = Number.isFinite(windValue) ? `${Math.round(windValue)} km/h` : "—";
   descEl.textContent = capitalize(description);
-
-  const iconName = pickLucideIcon(description);
-  setLucideIcon(iconEl, iconName, `Weather: ${capitalize(description)}`);
-
   timeEl.textContent = formatTime(new Date());
-  setThemeFromDescription(description);
+
+  // Icon + Theme
+  const { icon, theme } = pickIconAndTheme(conditionIcon, description);
+  setInlineIcon(iconEl, icon, `Weather: ${capitalize(description)}`);
+  applyTheme(theme);
 }
 
 // =================== Events ===================
@@ -161,7 +184,7 @@ form.addEventListener("submit", async (e) => {
     if (rid !== activeRequest) return; // outdated error
     console.error("Weather API error:", err);
     showMessage(err.message || "City not found. Try another search.", "error");
-    body.className = "theme--fog";
+    applyTheme("theme--fog");
   }
 });
 
@@ -180,7 +203,7 @@ setInterval(() => {
   } catch (err) {
     console.error("Init error:", err);
     showMessage(`Unable to load default city (${err.message}). Try searching.`, "error");
-    // Silent fallback so UI shows something
+    // Fallback city to keep UI alive
     try {
       const backup = await fetchCityWeather("Oslo");
       renderWeather(backup);
